@@ -1,0 +1,55 @@
+name: Webapp
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: project-8cdb4618-1dfe-4361-9cf
+  IMAGE: europe-north2-docker.pkg.dev/project-8cdb4618-1dfe-4361-9cf/recipes-client/recipes-client:latest
+  SERVICE_NAME: recipes-client
+  REGION: europe-north2
+
+jobs:
+  push_to_registry:
+    name: Push docker image to GCP
+    runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - id: "auth"
+        uses: "google-github-actions/auth@v2"
+        with:
+          credentials_json: "${{ secrets.SERVICE_ACCOUNT_KEY }}"
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v2"
+
+      - name: "Use gcloud CLI"
+        run: "gcloud info"
+
+      - name: "Docker auth"
+        run: |-
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build image
+        run: docker build . --file packages/webapp/Dockerfile --tag ${{ env.IMAGE }}
+
+      - name: Push image
+        run: docker push ${{ env.IMAGE }}
+
+      - id: Deploy
+        uses: "google-github-actions/deploy-cloudrun@v2"
+        with:
+          service: ${{ env.SERVICE_NAME }}
+          image: ${{ env.IMAGE }}
+          region: ${{ env.REGION }}
+
+      - name: "Use output"
+        run: 'curl "${{ steps.deploy.outputs.url }}/health"'
