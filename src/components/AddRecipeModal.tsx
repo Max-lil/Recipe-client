@@ -28,7 +28,7 @@ export function AddRecipeModal({ isOpen, onClose }: ComponentProps) {
   };
 
   return (
-    <div className="">
+    <div>
       <Modal.Root opened={isOpen} onClose={handleOnClose} centered>
         <Modal.Overlay />
         <ModalContent>

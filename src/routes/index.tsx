@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Box, Button, Container, SimpleGrid, Text } from "@mantine/core";
+import { Box, Button, Container, SimpleGrid, Title } from "@mantine/core";
 import { Link } from "@tanstack/react-router";
+import { BoxComponent } from "../components/BoxComponent";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -9,46 +10,47 @@ export const Route = createFileRoute("/")({
 function RouteComponent() {
   return (
     <div className="flex-auto">
-      <Container strategy="block">
-        <div className="flex flex-col gap-4">
+      <Container strategy="grid">
+        <div className="flex flex-col gap-8">
           <Box>
-            <Text size="xl" fw={800}>
+            <Title order={1} fw={700}>
               Välkommen!
-            </Text>
+            </Title>
           </Box>
-          <Box data-breakout>
-            <Text size="xl" fw={600}>
+          <BoxComponent>
+            <Title order={3} fw={600}>
               Vad vill du göra idag?
-            </Text>
-          </Box>
-          <Box data-container>
-            <SimpleGrid
-              cols={{ base: 1, sm: 2, md: 3 }}
-              spacing={{ base: "sm", md: "lg" }}
-            >
-              <Button
-                variant="filled"
-                size="md"
-                radius="lg"
-                color="orange"
-                fullWidth={true}
-                component={Link}
-                to="/recipes"
-                onClick={close}
+            </Title>
+            <Box data-container>
+              <SimpleGrid
+                cols={{ base: 1, sm: 2, md: 3 }}
+                spacing={{ base: "lg", md: "lg" }}
               >
-                Recept
-              </Button>
-              <Button
-                variant="filled"
-                size="md"
-                radius="lg"
-                color="orange"
-                fullWidth={true}
-              >
-                Veckoplanering
-              </Button>
-            </SimpleGrid>
-          </Box>
+                <Button
+                  variant="filled"
+                  size="md"
+                  radius="lg"
+                  color="orange"
+                  fullWidth={true}
+                  component={Link}
+                  to="/recipes"
+                >
+                  Recept
+                </Button>
+                <Button
+                  variant="filled"
+                  size="md"
+                  radius="lg"
+                  color="orange"
+                  fullWidth={true}
+                  component={Link}
+                  to="/weeklyplanning"
+                >
+                  Veckoplanering
+                </Button>
+              </SimpleGrid>
+            </Box>
+          </BoxComponent>
         </div>
       </Container>
     </div>
