@@ -5,7 +5,7 @@ interface Props {
   date: string;
 }
 
-export function DayPlanning({ date }: Props) {
+export const DayPlanning = ({ date }: Props) => {
   return (
     <div>
       <Title order={2}>{date}</Title>
@@ -17,4 +17,4 @@ export function DayPlanning({ date }: Props) {
       </BoxComponent>
     </div>
   );
-}
+};

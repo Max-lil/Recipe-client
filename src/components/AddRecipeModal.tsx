@@ -14,7 +14,7 @@ interface ComponentProps {
   onClose: () => void;
 }
 
-export function AddRecipeModal({ isOpen, onClose }: ComponentProps) {
+export const AddRecipeModal = ({ isOpen, onClose }: ComponentProps) => {
   const [input, setInput] = useState("");
 
   const handleSubmit = async () => {
@@ -66,4 +66,4 @@ export function AddRecipeModal({ isOpen, onClose }: ComponentProps) {
       </Modal.Root>
     </div>
   );
-}
+};
