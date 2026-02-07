@@ -8,6 +8,7 @@ import {
   TextInput,
 } from "@mantine/core";
 import { useState } from "react";
+import { useAddRecipeMutation } from "../services/recipes/queries";
 
 interface ComponentProps {
   isOpen: boolean;
@@ -15,16 +16,23 @@ interface ComponentProps {
 }
 
 export const AddRecipeModal = ({ isOpen, onClose }: ComponentProps) => {
-  const [input, setInput] = useState("");
+  const [recipe, setRecipe] = useState({
+    title: "",
+    url: "",
+  });
+  const addRecipeMutation = useAddRecipeMutation();
 
   const handleSubmit = async () => {
-    alert(input);
-    handleOnClose();
+    addRecipeMutation.mutate(recipe, {
+      onSuccess: () => {
+        setRecipe({ title: "", url: "" });
+        handleOnClose();
+      },
+    });
   };
 
   const handleOnClose = () => {
     onClose();
-    setInput("");
   };
 
   return (
@@ -48,8 +56,20 @@ export const AddRecipeModal = ({ isOpen, onClose }: ComponentProps) => {
                 placeholder="https://...."
                 size="md"
                 radius="lg"
-                value={input}
-                onChange={(e) => setInput(e.currentTarget.value)}
+                value={recipe.url}
+                onChange={(e) =>
+                  setRecipe({ ...recipe, url: e.currentTarget.value })
+                }
+              />
+              <TextInput
+                label="Namn på recptetet"
+                placeholder="Kötbullar...."
+                size="md"
+                radius="lg"
+                value={recipe.title}
+                onChange={(e) =>
+                  setRecipe({ ...recipe, title: e.currentTarget.value })
+                }
               />
               <Button onClick={handleSubmit}>Spara</Button>
             </div>

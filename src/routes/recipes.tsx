@@ -1,4 +1,4 @@
-import { Button } from "@mantine/core";
+import { Button, Loader } from "@mantine/core";
 import { createFileRoute } from "@tanstack/react-router";
 import { AddRecipeModal } from "../components/AddRecipeModal";
 import { useState } from "react";
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/recipes")({
 
 function RouteComponent() {
   const [opened, setOpened] = useState(false);
-  const { data } = useQuery(useRecipesQuery());
+  const { data, isPending } = useQuery(useRecipesQuery());
 
   return (
     <div className="flex flex-col gap-4">
@@ -27,7 +27,11 @@ function RouteComponent() {
       </Button>
       <AddRecipeModal isOpen={opened} onClose={() => setOpened(false)} />
       <BoxComponent>
-        <RecipeTable data={data} />
+        {isPending ? (
+          <Loader color="orange.5" size="xl" />
+        ) : (
+          <RecipeTable data={data} />
+        )}
       </BoxComponent>
     </div>
   );
