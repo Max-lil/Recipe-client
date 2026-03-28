@@ -1,19 +1,25 @@
-import { Title } from "@mantine/core";
+import { Loader, Title } from "@mantine/core";
 import { BoxComponent } from "./BoxComponent";
+import { useQuery } from "@tanstack/react-query";
+import { useRecipesQuery } from "../services/recipes/queries";
+import { RecipeSelector } from "./RecipeSelector";
 
 interface Props {
   date: string;
 }
 
 export const DayPlanning = ({ date }: Props) => {
+  const { data, isPending } = useQuery(useRecipesQuery());
+
   return (
     <div>
       <Title order={2}>{date}</Title>
       <BoxComponent>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius nostrum
-        totam reiciendis laborum ipsa facere, non dolore, neque veritatis quo
-        illum exercitationem molestiae iusto fugit, qui adipisci ipsum alias
-        quam!
+        {isPending ? (
+          <Loader color="orange.5" size="xl" />
+        ) : (
+          <RecipeSelector data={data} />
+        )}
       </BoxComponent>
     </div>
   );
