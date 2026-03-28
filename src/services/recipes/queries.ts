@@ -1,21 +1,25 @@
-import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query"
-import { addRecipe, getRecipes } from "./api"
-import type { Recipe } from "../../models/Recipe"
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { addRecipe, getRecipes } from "./api";
+import type { CreateRecipe } from "../../models/CreateRecipe";
 
 export const useRecipesQuery = () => {
-    return queryOptions({
-        queryKey: ["recipes"],
-        queryFn: getRecipes,
-    });
+  return queryOptions({
+    queryKey: ["recipes"],
+    queryFn: getRecipes,
+  });
 };
 
 export const useAddRecipeMutation = () => {
-    const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-    return useMutation({
-        mutationFn: (recipe: Recipe) => addRecipe(recipe),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["recipes"]});
-        },
-    });
+  return useMutation({
+    mutationFn: (recipe: CreateRecipe) => addRecipe(recipe),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["recipes"] });
+    },
+  });
 };
