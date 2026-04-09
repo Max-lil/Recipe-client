@@ -5,6 +5,7 @@ import {
   FileInput,
   Modal,
   ModalContent,
+  Stack,
   Text,
   TextInput,
 } from "@mantine/core";
@@ -17,93 +18,105 @@ interface ComponentProps {
 }
 
 export const AddRecipeModal = ({ isOpen, onClose }: ComponentProps) => {
-  const [recipe, setRecipe] = useState({
-    title: "",
-    url: "",
-  });
+  const [title, setTitle] = useState("");
+  const [url, setUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const addRecipeMutation = useAddRecipeMutation();
 
-  const handleSubmit = async () => {
-    const trimmedUrl = recipe.url.trim();
+  const resetForm = () => {
+    setTitle("");
+    setUrl("");
     setErrorMessage(null);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
+  const handleSubmit = () => {
+    const trimmedTitle = title.trim();
+    const trimmedUrl = url.trim();
+
+    setErrorMessage(null);
+
+    if (!trimmedTitle) {
+      setErrorMessage("Fyll i ett namn på receptet.");
+      return;
+    }
+
     const payload = trimmedUrl
-      ? { title: recipe.title, url: trimmedUrl }
-      : { title: recipe.title };
+      ? { title: trimmedTitle, url: trimmedUrl }
+      : { title: trimmedTitle };
 
     addRecipeMutation.mutate(payload, {
       onSuccess: () => {
-        setRecipe({ title: "", url: "" });
-        setErrorMessage(null);
-        handleOnClose();
+        handleClose();
       },
       onError: (error) => {
-        setErrorMessage(error.message || "Kunde inte lagga till recept.");
+        setErrorMessage(error.message || "Kunde inte lägga till recept.");
       },
     });
   };
 
-  const handleOnClose = () => {
-    setErrorMessage(null);
-    onClose();
-  };
-
   return (
-    <div>
-      <Modal.Root opened={isOpen} onClose={handleOnClose} centered>
-        <Modal.Overlay />
-        <ModalContent>
-          <Modal.Header>
-            <Modal.Title>
-              <Text size="lg" fw={600}>
-                Lägg till recept
-              </Text>
-            </Modal.Title>
-            <Modal.CloseButton />
-          </Modal.Header>
-          <Divider my="sm" />
-          <Modal.Body>
-            <div>
-              <TextInput
-                label="Länk till receptet"
-                placeholder="https://...."
-                size="md"
-                radius="lg"
-                value={recipe.url}
-                onChange={(e) =>
-                  setRecipe({ ...recipe, url: e.currentTarget.value })
-                }
-              />
-              <TextInput
-                label="Namn på recptetet"
-                placeholder="Kötbullar...."
-                size="md"
-                radius="lg"
-                value={recipe.title}
-                onChange={(e) =>
-                  setRecipe({ ...recipe, title: e.currentTarget.value })
-                }
-              />
-              {errorMessage ? (
-                <Alert color="red" mt="sm" radius="md">
-                  {errorMessage}
-                </Alert>
-              ) : null}
-              <Button loading={addRecipeMutation.isPending} onClick={handleSubmit}>
-                Spara
-              </Button>
-            </div>
-          </Modal.Body>
-          <Divider my="md" />
-          <Modal.Body>
-            <FileInput
-              label="Lägg in bild"
-              description="Lägg in en bild på ingridienser"
-              placeholder="Img"
+    <Modal.Root opened={isOpen} onClose={handleClose} centered>
+      <Modal.Overlay />
+
+      <ModalContent>
+        <Modal.Header>
+          <Modal.Title>
+            <Text size="lg" fw={600}>
+              Lägg till recept
+            </Text>
+          </Modal.Title>
+          <Modal.CloseButton />
+        </Modal.Header>
+
+        <Divider my="sm" />
+
+        <Modal.Body>
+          <Stack>
+            <TextInput
+              label="Länk till receptet"
+              placeholder="https://...."
+              size="md"
+              radius="lg"
+              value={url}
+              onChange={(event) => setUrl(event.currentTarget.value)}
             />
-          </Modal.Body>
-        </ModalContent>
-      </Modal.Root>
-    </div>
+
+            <TextInput
+              label="Namn på receptet"
+              placeholder="Köttbullar...."
+              size="md"
+              radius="lg"
+              value={title}
+              onChange={(event) => setTitle(event.currentTarget.value)}
+            />
+
+            {errorMessage ? (
+              <Alert color="red" radius="md">
+                {errorMessage}
+              </Alert>
+            ) : null}
+
+            <Button loading={addRecipeMutation.isPending} onClick={handleSubmit}>
+              Spara
+            </Button>
+          </Stack>
+        </Modal.Body>
+
+        <Divider my="md" />
+
+        <Modal.Body>
+          <FileInput
+            label="Lägg in bild"
+            description="Lägg in en bild på ingredienser"
+            placeholder="Img"
+          />
+        </Modal.Body>
+      </ModalContent>
+    </Modal.Root>
   );
 };

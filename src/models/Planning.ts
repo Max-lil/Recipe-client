@@ -1,9 +1,14 @@
 import { z } from "zod";
 
+const optionalUrlSchema = z
+  .string()
+  .nullish()
+  .transform((value) => value ?? undefined);
+
 export const recipeBasicSchema = z.object({
   id: z.number(),
   title: z.string(),
-  url: z.string().optional(),
+  url: optionalUrlSchema,
 });
 
 export const dayPlanSchema = z.object({

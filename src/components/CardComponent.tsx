@@ -1,6 +1,6 @@
-import { Card, Stack, Text, ThemeIcon, useMantineTheme } from "@mantine/core";
 import type { Icon } from "@tabler/icons-react";
 import { Link } from "@tanstack/react-router";
+import { Card, Stack, Text, ThemeIcon, useMantineTheme } from "@mantine/core";
 
 interface Props {
   icon: Icon;
@@ -16,6 +16,7 @@ export const CardComponent = ({
   to,
 }: Props) => {
   const theme = useMantineTheme();
+
   return (
     <Card
       component={Link}
@@ -35,7 +36,7 @@ export const CardComponent = ({
             {header}
           </Text>
 
-          {body && <Text size="sm">{body}</Text>}
+          {body ? <Text size="sm">{body}</Text> : null}
         </Stack>
       </Stack>
     </Card>

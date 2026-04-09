@@ -7,6 +7,11 @@ import {
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+const getErrorMessage = async (response: Response, fallbackMessage: string) => {
+  const message = await response.text();
+  return message || fallbackMessage;
+};
+
 export const getWeekPlan = async (
   userId: number,
   weekStartDate: string,
@@ -23,7 +28,9 @@ export const getWeekPlan = async (
   }
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch week plan: ${response.statusText}`);
+    throw new Error(
+      await getErrorMessage(response, "Kunde inte hämta veckoplaneringen."),
+    );
   }
 
   const data = await response.json();
@@ -44,7 +51,9 @@ export const saveWeekPlan = async (
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to save week plan: ${response.statusText}`);
+    throw new Error(
+      await getErrorMessage(response, "Kunde inte spara veckoplaneringen."),
+    );
   }
 
   const data = await response.json();

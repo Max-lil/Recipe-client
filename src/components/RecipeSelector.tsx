@@ -1,4 +1,3 @@
-import type { ApiRecipeschema } from "../models/Recipe";
 import {
   Button,
   Group,
@@ -8,10 +7,11 @@ import {
   Table,
   Text,
 } from "@mantine/core";
+import type { Recipe } from "../models/Recipe";
 
 interface Props {
-  data?: ApiRecipeschema[];
-  onSelect: (recipe: ApiRecipeschema | null) => void;
+  data?: Recipe[];
+  onSelect: (recipe: Recipe | null) => void;
   selectedRecipeId?: number;
 }
 
@@ -30,7 +30,7 @@ export const RecipeSelector = ({ data, onSelect, selectedRecipeId }: Props) => {
           size="xs"
           variant={isSelected(recipe.id) ? "filled" : "light"}
         >
-          {isSelected(recipe.id) ? "Vald" : "Valj"}
+          {isSelected(recipe.id) ? "Vald" : "Välj"}
         </Button>
       </Table.Td>
       <Table.Td>{recipe.title}</Table.Td>
@@ -72,8 +72,9 @@ export const RecipeSelector = ({ data, onSelect, selectedRecipeId }: Props) => {
             size="xs"
             variant={isSelected(recipe.id) ? "filled" : "light"}
           >
-            {isSelected(recipe.id) ? "Vald" : "Valj"}
+            {isSelected(recipe.id) ? "Vald" : "Välj"}
           </Button>
+
           {recipe.url ? (
             <Button
               color="orange.5"
@@ -100,7 +101,7 @@ export const RecipeSelector = ({ data, onSelect, selectedRecipeId }: Props) => {
         <Table miw={700} stickyHeader>
           <Table.Thead bg="white">
             <Table.Tr>
-              <Table.Th>Valj</Table.Th>
+              <Table.Th>Välj</Table.Th>
               <Table.Th>Namn</Table.Th>
               <Table.Th>URL</Table.Th>
             </Table.Tr>

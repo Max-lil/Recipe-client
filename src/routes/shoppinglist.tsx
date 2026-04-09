@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Alert, Loader, Text, Title } from "@mantine/core";
-import { useMemo, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { Alert, Loader, Stack, Text, Title } from "@mantine/core";
+import { useState } from "react";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import { BoxComponent } from "../components/BoxComponent";
@@ -19,24 +19,25 @@ const USER_ID = 1;
 
 function RouteComponent() {
   const [value, setValue] = useState<string | null>(null);
-  const weekStartDate = useMemo(
-    () => (value ? dayjs(value).startOf("isoWeek").format("YYYY-MM-DD") : null),
-    [value],
-  );
+  const weekStartDate = value
+    ? dayjs(value).startOf("isoWeek").format("YYYY-MM-DD")
+    : null;
 
   const weekPlanQuery = useQuery(
     weekPlanQueryOptions(USER_ID, weekStartDate ?? undefined),
   );
 
   return (
-    <div>
+    <Stack gap="md">
       <Title order={1} fw={700}>
         Inköpslista
       </Title>
+
       <WeekInputMinimal onChange={setValue} />
+
       <BoxComponent>
         {!weekStartDate ? (
-          <Text>Välj en vecka for att se inköpslistan.</Text>
+          <Text>Välj en vecka för att se inköpslistan.</Text>
         ) : null}
 
         {weekStartDate && weekPlanQuery.isPending ? (
@@ -44,23 +45,23 @@ function RouteComponent() {
         ) : null}
 
         {weekStartDate && weekPlanQuery.isError ? (
-          <Alert color="red" title="Kunde inte hamta veckoplaneringen">
+          <Alert color="red" title="Kunde inte hämta veckoplaneringen">
             {weekPlanQuery.error instanceof Error
               ? weekPlanQuery.error.message
-              : "Ett ovantat fel uppstod."}
+              : "Ett oväntat fel uppstod."}
           </Alert>
         ) : null}
 
         {weekStartDate &&
         weekPlanQuery.isSuccess &&
         weekPlanQuery.data === null ? (
-          <Text>Ingen sparad veckoplan for vald vecka.</Text>
+          <Text>Ingen sparad veckoplan för vald vecka.</Text>
         ) : null}
 
         {weekPlanQuery.data ? (
           <ShoppingListComponent weekPlanId={weekPlanQuery.data.id} />
         ) : null}
       </BoxComponent>
-    </div>
+    </Stack>
   );
 }

@@ -1,19 +1,32 @@
-import type {
-  ApiCreateRecipeSchema,
-  ApiRecipeschema,
+import {
+  recipesResponseSchema,
+  type CreateRecipeInput,
+  type Recipe,
 } from "../../models/Recipe";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const getRecipes = async (): Promise<ApiRecipeschema[]> => {
-  const response = await fetch(`${BASE_URL}/recipes`);
-  return await response.json();
+const getErrorMessage = async (response: Response, fallbackMessage: string) => {
+  const message = await response.text();
+  return message || fallbackMessage;
 };
 
-export const addRecipe = async (recipe: ApiCreateRecipeSchema) => {
+export const getRecipes = async (): Promise<Recipe[]> => {
+  const response = await fetch(`${BASE_URL}/recipes`);
+
+  if (!response.ok) {
+    throw new Error(await getErrorMessage(response, "Kunde inte hämta recept."));
+  }
+
+  const data = await response.json();
+  return recipesResponseSchema.parse(data);
+};
+
+export const addRecipe = async (recipe: CreateRecipeInput) => {
   const endpoint = recipe.url
     ? `${BASE_URL}/recipes/scrape`
     : `${BASE_URL}/recipes`;
+
   const response = await fetch(endpoint, {
     method: "POST",
     headers: {
@@ -23,8 +36,9 @@ export const addRecipe = async (recipe: ApiCreateRecipeSchema) => {
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Kunde inte lagga till recept!");
+    throw new Error(
+      await getErrorMessage(response, "Kunde inte lägga till recept."),
+    );
   }
 
   return response.json();

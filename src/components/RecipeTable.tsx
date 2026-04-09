@@ -1,9 +1,10 @@
 import { Button, Table } from "@mantine/core";
-import type { ApiRecipeschema } from "../models/Recipe";
+import type { Recipe } from "../models/Recipe";
 
 interface Props {
-  data?: ApiRecipeschema[];
+  data?: Recipe[];
 }
+
 export const RecipeTable = ({ data }: Props) => {
   return (
     <Table verticalSpacing="md" highlightOnHover>

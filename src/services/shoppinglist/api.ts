@@ -5,13 +5,20 @@ import {
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+const getErrorMessage = async (response: Response, fallbackMessage: string) => {
+  const message = await response.text();
+  return message || fallbackMessage;
+};
+
 export const getShoppingListByWeekPlanId = async (
   weekPlanId: number,
 ): Promise<ShoppingListItem[]> => {
   const response = await fetch(`${BASE_URL}/shoppinglist/${weekPlanId}`);
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch shopping list: ${response.statusText}`);
+    throw new Error(
+      await getErrorMessage(response, "Kunde inte hämta inköpslistan."),
+    );
   }
 
   const data = await response.json();

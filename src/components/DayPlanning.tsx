@@ -7,38 +7,42 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { BoxComponent } from "./BoxComponent";
-import { useQuery } from "@tanstack/react-query";
-import { useRecipesQuery } from "../services/recipes/queries";
-import { RecipeSelector } from "./RecipeSelector";
 import { useDisclosure } from "@mantine/hooks";
-import type { ApiRecipeschema } from "../models/Recipe";
+import type { Recipe } from "../models/Recipe";
+import { BoxComponent } from "./BoxComponent";
+import { RecipeSelector } from "./RecipeSelector";
 
 interface Props {
   dayKey: string;
   date: string;
-  selectedRecipe: ApiRecipeschema | null;
-  onSelectRecipe: (dayKey: string, recipe: ApiRecipeschema | null) => void;
+  recipes?: Recipe[];
+  isRecipesLoading: boolean;
+  selectedRecipe: Recipe | null;
+  onSelectRecipe: (dayKey: string, recipe: Recipe | null) => void;
 }
 
 export const DayPlanning = ({
   dayKey,
   date,
+  recipes,
+  isRecipesLoading,
   selectedRecipe,
   onSelectRecipe,
 }: Props) => {
-  const { data, isPending } = useQuery(useRecipesQuery());
   const [opened, { toggle }] = useDisclosure(false);
 
   return (
     <div>
       <Title order={2}>{date}</Title>
+
       <BoxComponent>
         <Stack gap="xs">
           <Text fw={500}>Valt recept</Text>
+
           {selectedRecipe ? (
             <Stack gap="xs">
               <Text>{selectedRecipe.title}</Text>
+
               {selectedRecipe.url ? (
                 <Button
                   color="orange.5"
@@ -58,12 +62,13 @@ export const DayPlanning = ({
         </Stack>
 
         <Burger variant="filled" opened={opened} onClick={toggle} />
-        {isPending ? (
+
+        {isRecipesLoading ? (
           <Loader color="orange.5" size="xl" />
         ) : (
           <Collapse in={opened}>
             <RecipeSelector
-              data={data}
+              data={recipes}
               onSelect={(recipe) => onSelectRecipe(dayKey, recipe)}
               selectedRecipeId={selectedRecipe?.id}
             />

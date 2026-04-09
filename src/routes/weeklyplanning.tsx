@@ -1,23 +1,23 @@
-import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
 import { Alert, Button, Group, Loader, Text, Title } from "@mantine/core";
+import { useState } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/sv";
 import isoWeek from "dayjs/plugin/isoWeek";
 import { DayPlanning } from "../components/DayPlanning";
 import { WeekInputMinimal } from "../components/WeekPicker";
-import type { ApiRecipeschema } from "../models/Recipe";
 import type {
   PlanningDraft,
   SaveWeekPlanRequest,
   WeekPlan,
 } from "../models/Planning";
+import type { Recipe } from "../models/Recipe";
 import {
   useSaveWeekPlanMutation,
   weekPlanQueryOptions,
 } from "../services/planning/queries";
-import { useRecipesQuery } from "../services/recipes/queries";
+import { recipesQueryOptions } from "../services/recipes/queries";
 
 export const Route = createFileRoute("/weeklyplanning")({
   component: RouteComponent,
@@ -29,7 +29,7 @@ dayjs.locale("sv");
 const USER_ID = 1;
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
-type RecipeEdits = Partial<Record<string, ApiRecipeschema | null>>;
+type RecipeEdits = Partial<Record<string, Recipe | null>>;
 
 const createEmptyDraft = (weekStartDate: string): PlanningDraft => ({
   weekStartDate,
@@ -80,35 +80,27 @@ function RouteComponent() {
   const [recipeEdits, setRecipeEdits] = useState<RecipeEdits>({});
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
 
-  const weekStartDate = useMemo(
-    () => (value ? dayjs(value).startOf("isoWeek").format("YYYY-MM-DD") : null),
-    [value],
-  );
+  const weekStartDate = value
+    ? dayjs(value).startOf("isoWeek").format("YYYY-MM-DD")
+    : null;
 
   const weekPlanQuery = useQuery(
     weekPlanQueryOptions(USER_ID, weekStartDate ?? undefined),
   );
-  const { data: recipes } = useQuery(useRecipesQuery());
+  const recipesQuery = useQuery(recipesQueryOptions());
   const saveWeekMutation = useSaveWeekPlanMutation();
 
-  const baseDraft = useMemo(() => {
-    if (!weekStartDate || !weekPlanQuery.isSuccess) {
-      return null;
-    }
+  let baseDraft: PlanningDraft | null = null;
 
-    return weekPlanQuery.data
+  if (weekStartDate && weekPlanQuery.isSuccess) {
+    baseDraft = weekPlanQuery.data
       ? mapWeekPlanToDraft(weekPlanQuery.data)
       : createEmptyDraft(weekStartDate);
-  }, [weekPlanQuery.data, weekPlanQuery.isSuccess, weekStartDate]);
+  }
 
-  const draft = useMemo(() => {
-    if (!baseDraft) {
-      return null;
-    }
-
-    return mergeDraftWithRecipeEdits(baseDraft, recipeEdits);
-  }, [baseDraft, recipeEdits]);
-
+  const draft = baseDraft
+    ? mergeDraftWithRecipeEdits(baseDraft, recipeEdits)
+    : null;
   const isDirty = Object.keys(recipeEdits).length > 0;
 
   const handleWeekChange = (nextValue: string | null) => {
@@ -117,13 +109,10 @@ function RouteComponent() {
     setSaveStatus("idle");
   };
 
-  const handleSelectRecipe = (
-    dayKey: string,
-    recipe: ApiRecipeschema | null,
-  ) => {
-    setRecipeEdits((prev) => {
+  const handleSelectRecipe = (dayKey: string, recipe: Recipe | null) => {
+    setRecipeEdits((previousEdits) => {
       if (!baseDraft) {
-        return prev;
+        return previousEdits;
       }
 
       const baseRecipeId =
@@ -132,24 +121,28 @@ function RouteComponent() {
       const nextRecipeId = recipe?.id ?? null;
 
       if (baseRecipeId === nextRecipeId) {
-        const remainingEdits = { ...prev };
-        delete remainingEdits[dayKey];
-        return remainingEdits;
+        const nextEdits = { ...previousEdits };
+        delete nextEdits[dayKey];
+        return nextEdits;
       }
 
-      return { ...prev, [dayKey]: recipe };
+      return { ...previousEdits, [dayKey]: recipe };
     });
+
     setSaveStatus("idle");
   };
 
   const handleRandomizeRecipes = () => {
-    if (!baseDraft || !recipes?.length) {
+    if (!baseDraft || !recipesQuery.data?.length) {
       return;
     }
 
     setRecipeEdits(() =>
       baseDraft.days.reduce<RecipeEdits>((nextEdits, day) => {
-        const recipe = recipes[Math.floor(Math.random() * recipes.length)];
+        const randomIndex = Math.floor(
+          Math.random() * recipesQuery.data.length,
+        );
+        const recipe = recipesQuery.data[randomIndex];
 
         if (day.recipe?.id !== recipe.id) {
           nextEdits[day.plannedDate] = recipe;
@@ -158,6 +151,7 @@ function RouteComponent() {
         return nextEdits;
       }, {}),
     );
+
     setSaveStatus("idle");
   };
 
@@ -190,10 +184,10 @@ function RouteComponent() {
       ) : null}
 
       {weekStartDate && weekPlanQuery.isError ? (
-        <Alert color="red" title="Kunde inte hamta veckoplaneringen">
+        <Alert color="red" title="Kunde inte hämta veckoplaneringen">
           {weekPlanQuery.error instanceof Error
             ? weekPlanQuery.error.message
-            : "Ett ovantat fel uppstod."}
+            : "Ett oväntat fel uppstod."}
         </Alert>
       ) : null}
 
@@ -202,6 +196,8 @@ function RouteComponent() {
           key={day.plannedDate}
           dayKey={day.plannedDate}
           date={`${dayjs(day.plannedDate).format("dddd")} ${day.plannedDate}`}
+          recipes={recipesQuery.data}
+          isRecipesLoading={recipesQuery.isPending}
           onSelectRecipe={handleSelectRecipe}
           selectedRecipe={day.recipe}
         />
@@ -210,7 +206,7 @@ function RouteComponent() {
       {draft ? (
         <Group>
           <Button
-            disabled={!recipes?.length}
+            disabled={!recipesQuery.data?.length}
             onClick={handleRandomizeRecipes}
             variant="light"
           >
@@ -229,12 +225,12 @@ function RouteComponent() {
       {draft ? (
         <Text c={saveStatus === "error" ? "red" : "dimmed"} size="sm">
           {saveStatus === "idle" && isDirty
-            ? "Du har osparade andringar."
+            ? "Du har osparade ändringar."
             : null}
           {saveStatus === "idle" && !isDirty
-            ? "Valj recept for veckan och spara nar du ar klar."
+            ? "Välj recept för veckan och spara när du är klar."
             : null}
-          {saveStatus === "saved" ? "Veckoplaneringen ar sparad." : null}
+          {saveStatus === "saved" ? "Veckoplaneringen är sparad." : null}
           {saveStatus === "error"
             ? "Det gick inte att spara veckoplaneringen."
             : null}

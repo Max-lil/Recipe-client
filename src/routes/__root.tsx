@@ -25,10 +25,10 @@ export const Route = createRootRoute({
 });
 
 const navLinks = [
-  { label: "Home", to: "/" },
-  { label: "Weekly planning", to: "/weeklyplanning" },
-  { label: "Shopping list", to: "/shoppinglist" },
-  { label: "Recipes", to: "/recipes" },
+  { label: "Hem", to: "/" },
+  { label: "Veckoplanering", to: "/weeklyplanning" },
+  { label: "Inköpslista", to: "/shoppinglist" },
+  { label: "Recept", to: "/recipes" },
 ];
 
 function RootLayout() {
@@ -59,7 +59,7 @@ function RootLayout() {
             <Box
               component="img"
               src={logo}
-              alt="Logo"
+              alt={siteConfig.logoAlt}
               style={{
                 width: 72,
                 height: 26,
@@ -67,6 +67,7 @@ function RootLayout() {
                 objectFit: "contain",
               }}
             />
+
             <Text size="lg" c={theme.colors.primary[6]}>
               {siteConfig.siteName}
             </Text>
@@ -104,7 +105,7 @@ function RootLayout() {
               opened={drawerOpened}
               onClick={toggleDrawer}
               hiddenFrom="sm"
-              aria-label="Toggle navigation"
+              aria-label="Öppna navigation"
               color={theme.colors.primary[6]}
               lineSize={3}
             />

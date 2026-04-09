@@ -1,16 +1,22 @@
 import { z } from "zod";
 
-export const RecipeSchema = z.object({
+const optionalUrlSchema = z
+  .string()
+  .nullish()
+  .transform((value) => value ?? undefined);
+
+export const recipeSchema = z.object({
   id: z.number(),
   title: z.string(),
-  url: z.string().optional(),
+  url: optionalUrlSchema,
 });
 
-export const CreateRecipeSchema = z.object({
+export const recipesResponseSchema = z.array(recipeSchema);
+
+export const createRecipeSchema = z.object({
   title: z.string(),
   url: z.string().optional(),
 });
 
-export type ApiRecipeschema = z.infer<typeof RecipeSchema>;
-
-export type ApiCreateRecipeSchema = z.infer<typeof CreateRecipeSchema>;
+export type Recipe = z.infer<typeof recipeSchema>;
+export type CreateRecipeInput = z.infer<typeof createRecipeSchema>;

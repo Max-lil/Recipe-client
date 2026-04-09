@@ -1,3 +1,4 @@
+import { IconBasket, IconCalendarWeek } from "@tabler/icons-react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Box,
@@ -8,8 +9,6 @@ import {
 } from "@mantine/core";
 import { BoxComponent } from "../components/BoxComponent";
 import { CardComponent } from "../components/CardComponent";
-import { IconCalendarWeek } from "@tabler/icons-react";
-import { IconBasket } from "@tabler/icons-react";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
