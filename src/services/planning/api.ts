@@ -1,6 +1,8 @@
 import {
+  loadWeekPlanRequestSchema,
   saveWeekPlanRequestSchema,
   weekPlanSchema,
+  type LoadWeekPlanRequest,
   type SaveWeekPlanRequest,
   type WeekPlan,
 } from "../../models/Planning";
@@ -12,24 +14,29 @@ const getErrorMessage = async (response: Response, fallbackMessage: string) => {
   return message || fallbackMessage;
 };
 
-export const getWeekPlan = async (
+export const loadWeekPlan = async (
   userId: number,
   weekStartDate: string,
-): Promise<WeekPlan | null> => {
-  const params = new URLSearchParams({
-    userId: String(userId),
+): Promise<WeekPlan> => {
+  const payload: LoadWeekPlanRequest = loadWeekPlanRequestSchema.parse({
+    userId,
     weekStartDate,
   });
 
-  const response = await fetch(`${BASE_URL}/planning/week?${params.toString()}`);
-
-  if (response.status === 404) {
-    return null;
-  }
+  const response = await fetch(`${BASE_URL}/planning/week`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
 
   if (!response.ok) {
     throw new Error(
-      await getErrorMessage(response, "Kunde inte hämta veckoplaneringen."),
+      await getErrorMessage(
+        response,
+        "Kunde inte h\u00E4mta veckoplaneringen.",
+      ),
     );
   }
 
@@ -52,7 +59,10 @@ export const saveWeekPlan = async (
 
   if (!response.ok) {
     throw new Error(
-      await getErrorMessage(response, "Kunde inte spara veckoplaneringen."),
+      await getErrorMessage(
+        response,
+        "Kunde inte spara veckoplaneringen.",
+      ),
     );
   }
 

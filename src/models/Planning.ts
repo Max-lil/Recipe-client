@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { z } from "zod";
 
 const optionalUrlSchema = z
@@ -24,6 +25,24 @@ export const weekPlanSchema = z.object({
   days: z.array(dayPlanSchema),
 });
 
+const weekStartDateSchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "weekStartDate must use yyyy-MM-dd format.")
+  .refine((value) => dayjs(value).isValid(), "weekStartDate must be a valid date.")
+  .refine(
+    (value) => dayjs(value).format("YYYY-MM-DD") === value,
+    "weekStartDate must use yyyy-MM-dd format.",
+  )
+  .refine(
+    (value) => dayjs(value).day() === 1,
+    "weekStartDate must be a Monday.",
+  );
+
+export const loadWeekPlanRequestSchema = z.object({
+  userId: z.number(),
+  weekStartDate: weekStartDateSchema,
+});
+
 export const saveWeekPlanDaySchema = z.object({
   plannedDate: z.string(),
   recipeId: z.number().nullable(),
@@ -31,7 +50,7 @@ export const saveWeekPlanDaySchema = z.object({
 
 export const saveWeekPlanRequestSchema = z.object({
   userId: z.number(),
-  weekStartDate: z.string(),
+  weekStartDate: weekStartDateSchema,
   days: z.array(saveWeekPlanDaySchema),
 });
 
@@ -50,6 +69,7 @@ export const planningDraftSchema = z.object({
 export type RecipeBasic = z.infer<typeof recipeBasicSchema>;
 export type DayPlan = z.infer<typeof dayPlanSchema>;
 export type WeekPlan = z.infer<typeof weekPlanSchema>;
+export type LoadWeekPlanRequest = z.infer<typeof loadWeekPlanRequestSchema>;
 export type SaveWeekPlanDay = z.infer<typeof saveWeekPlanDaySchema>;
 export type SaveWeekPlanRequest = z.infer<typeof saveWeekPlanRequestSchema>;
 export type PlanningDraftDay = z.infer<typeof planningDraftDaySchema>;

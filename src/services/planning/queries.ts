@@ -3,7 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { getWeekPlan, saveWeekPlan } from "./api";
+import { loadWeekPlan, saveWeekPlan } from "./api";
 import type { SaveWeekPlanRequest } from "../../models/Planning";
 
 export const weekPlanQueryOptions = (
@@ -12,7 +12,7 @@ export const weekPlanQueryOptions = (
 ) =>
   queryOptions({
     queryKey: ["planning", userId, weekStartDate],
-    queryFn: () => getWeekPlan(userId, weekStartDate!),
+    queryFn: () => loadWeekPlan(userId, weekStartDate!),
     enabled: !!weekStartDate,
   });
 

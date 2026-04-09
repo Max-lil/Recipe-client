@@ -30,14 +30,14 @@ function RouteComponent() {
   return (
     <Stack gap="md">
       <Title order={1} fw={700}>
-        Inköpslista
+        {"Ink\u00F6pslista"}
       </Title>
 
       <WeekInputMinimal onChange={setValue} />
 
       <BoxComponent>
         {!weekStartDate ? (
-          <Text>Välj en vecka för att se inköpslistan.</Text>
+          <Text>{"V\u00E4lj en vecka f\u00F6r att se ink\u00F6pslistan."}</Text>
         ) : null}
 
         {weekStartDate && weekPlanQuery.isPending ? (
@@ -45,17 +45,14 @@ function RouteComponent() {
         ) : null}
 
         {weekStartDate && weekPlanQuery.isError ? (
-          <Alert color="red" title="Kunde inte hämta veckoplaneringen">
+          <Alert
+            color="red"
+            title={"Kunde inte h\u00E4mta veckoplaneringen"}
+          >
             {weekPlanQuery.error instanceof Error
               ? weekPlanQuery.error.message
-              : "Ett oväntat fel uppstod."}
+              : "Ett ov\u00E4ntat fel uppstod."}
           </Alert>
-        ) : null}
-
-        {weekStartDate &&
-        weekPlanQuery.isSuccess &&
-        weekPlanQuery.data === null ? (
-          <Text>Ingen sparad veckoplan för vald vecka.</Text>
         ) : null}
 
         {weekPlanQuery.data ? (

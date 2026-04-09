@@ -31,14 +31,6 @@ const USER_ID = 1;
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 type RecipeEdits = Partial<Record<string, Recipe | null>>;
 
-const createEmptyDraft = (weekStartDate: string): PlanningDraft => ({
-  weekStartDate,
-  days: Array.from({ length: 7 }, (_, index) => ({
-    plannedDate: dayjs(weekStartDate).add(index, "day").format("YYYY-MM-DD"),
-    recipe: null,
-  })),
-});
-
 const mapWeekPlanToDraft = (week: WeekPlan): PlanningDraft => ({
   weekPlanId: week.id,
   weekStartDate: week.weekStartDate,
@@ -93,9 +85,7 @@ function RouteComponent() {
   let baseDraft: PlanningDraft | null = null;
 
   if (weekStartDate && weekPlanQuery.isSuccess) {
-    baseDraft = weekPlanQuery.data
-      ? mapWeekPlanToDraft(weekPlanQuery.data)
-      : createEmptyDraft(weekStartDate);
+    baseDraft = mapWeekPlanToDraft(weekPlanQuery.data);
   }
 
   const draft = baseDraft
