@@ -15,24 +15,28 @@ export const ShoppingListComponent = ({ weekPlanId }: Props) => {
 
   if (shoppingListQuery.isError) {
     return (
-      <Alert color="red" title="Kunde inte hämta inköpslistan">
+      <Alert color="red" title={"Kunde inte h\u00E4mta ink\u00F6pslistan"}>
         {shoppingListQuery.error instanceof Error
           ? shoppingListQuery.error.message
-          : "Ett oväntat fel uppstod."}
+          : "Ett ov\u00E4ntat fel uppstod."}
       </Alert>
     );
   }
 
   if (shoppingListQuery.data.length === 0) {
-    return <Text>Det finns inga ingredienser i inköpslistan ännu.</Text>;
+    return <Text>{"Det finns inga ingredienser i ink\u00F6pslistan \u00E4nnu."}</Text>;
   }
+
+  const sortedShoppingList = [...shoppingListQuery.data].sort((left, right) =>
+    left.name.localeCompare(right.name, "sv", { sensitivity: "base" }),
+  );
 
   return (
     <Stack gap="sm">
       <Text fw={600}>Ingredienser</Text>
 
       <List spacing="xs">
-        {shoppingListQuery.data.map((item) => (
+        {sortedShoppingList.map((item) => (
           <List.Item key={item.id}>
             {item.quantity !== null ? `${item.quantity} ${item.unit} ` : ""}
             {item.name}

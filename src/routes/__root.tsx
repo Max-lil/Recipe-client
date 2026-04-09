@@ -57,16 +57,22 @@ function RootLayout() {
         <Container size="lg">
           <Group justify="space-between" h={70}>
             <Box
-              component="img"
-              src={logo}
-              alt={siteConfig.logoAlt}
-              style={{
-                width: 72,
-                height: 26,
-                display: "block",
-                objectFit: "contain",
-              }}
-            />
+              component={Link}
+              to="/"
+              style={{ display: "block", width: 72, height: 26 }}
+            >
+              <Box
+                component="img"
+                src={logo}
+                alt={siteConfig.logoAlt}
+                style={{
+                  width: 72,
+                  height: 26,
+                  display: "block",
+                  objectFit: "contain",
+                }}
+              />
+            </Box>
 
             <Text size="lg" c={theme.colors.primary[6]}>
               {siteConfig.siteName}
