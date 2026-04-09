@@ -1,62 +1,113 @@
-import { useState } from "react";
-import type { Recipe } from "../models/Recipe";
-import { Button, Checkbox, Table } from "@mantine/core";
+import type { ApiRecipeschema } from "../models/Recipe";
+import {
+  Button,
+  Group,
+  Paper,
+  ScrollArea,
+  Stack,
+  Table,
+  Text,
+} from "@mantine/core";
 
 interface Props {
-  data?: Recipe[];
+  data?: ApiRecipeschema[];
+  onSelect: (recipe: ApiRecipeschema | null) => void;
+  selectedRecipeId?: number;
 }
 
-export const RecipeSelector = ({ data }: Props) => {
-  const [selectedRows, setSelectedRows] = useState<number[]>([]);
-  console.log("query data", data);
+export const RecipeSelector = ({ data, onSelect, selectedRecipeId }: Props) => {
+  const isSelected = (id: number) => selectedRecipeId === id;
 
-  const rows = data?.map((recipe) => (
+  const desktopRows = data?.map((recipe) => (
     <Table.Tr
       key={recipe.id}
-      bg={
-        selectedRows.includes(recipe.id)
-          ? "var(--mantine-color-blue-light)"
-          : undefined
-      }
+      bg={isSelected(recipe.id) ? "var(--mantine-color-blue-light)" : undefined}
     >
       <Table.Td>
-        <Checkbox
-          aria-label={`Select ${recipe.title}`}
-          checked={selectedRows.includes(recipe.id)}
-          onClick={() =>
-            setSelectedRows((prev) =>
-              prev.includes(recipe.id)
-                ? prev.filter((id) => id !== recipe.id)
-                : [...prev, recipe.id],
-            )
-          }
-        />
+        <Button
+          color={isSelected(recipe.id) ? "blue" : "gray"}
+          onClick={() => onSelect(isSelected(recipe.id) ? null : recipe)}
+          size="xs"
+          variant={isSelected(recipe.id) ? "filled" : "light"}
+        >
+          {isSelected(recipe.id) ? "Vald" : "Valj"}
+        </Button>
       </Table.Td>
       <Table.Td>{recipe.title}</Table.Td>
       <Table.Td>
-        <Button
-          color="orange.5"
-          component="a"
-          href={recipe.url}
-          target="_blank"
-          size="sm"
-        >
-          Till recept
-        </Button>
+        {recipe.url ? (
+          <Button
+            color="orange.5"
+            component="a"
+            href={recipe.url}
+            target="_blank"
+            size="sm"
+          >
+            Till recept
+          </Button>
+        ) : null}
       </Table.Td>
     </Table.Tr>
   ));
 
+  const mobileRows = data?.map((recipe) => (
+    <Paper
+      key={recipe.id}
+      p="sm"
+      radius="md"
+      withBorder
+      bg={isSelected(recipe.id) ? "var(--mantine-color-blue-light)" : "white"}
+    >
+      <Stack gap="sm">
+        <Group align="flex-start" wrap="nowrap">
+          <Text fw={500} style={{ flex: 1, wordBreak: "break-word" }}>
+            {recipe.title}
+          </Text>
+        </Group>
+
+        <Group grow>
+          <Button
+            color={isSelected(recipe.id) ? "blue" : "gray"}
+            onClick={() => onSelect(isSelected(recipe.id) ? null : recipe)}
+            size="xs"
+            variant={isSelected(recipe.id) ? "filled" : "light"}
+          >
+            {isSelected(recipe.id) ? "Vald" : "Valj"}
+          </Button>
+          {recipe.url ? (
+            <Button
+              color="orange.5"
+              component="a"
+              href={recipe.url}
+              target="_blank"
+              size="xs"
+            >
+              Till recept
+            </Button>
+          ) : null}
+        </Group>
+      </Stack>
+    </Paper>
+  ));
+
   return (
-    <Table>
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th />
-          <Table.Th>Namn</Table.Th>
-          <Table.Th>URL</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>{rows}</Table.Tbody>
-    </Table>
+    <>
+      <Stack hiddenFrom="sm" gap="sm">
+        {mobileRows}
+      </Stack>
+
+      <ScrollArea h={300} visibleFrom="sm">
+        <Table miw={700} stickyHeader>
+          <Table.Thead bg="white">
+            <Table.Tr>
+              <Table.Th>Valj</Table.Th>
+              <Table.Th>Namn</Table.Th>
+              <Table.Th>URL</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>{desktopRows}</Table.Tbody>
+        </Table>
+      </ScrollArea>
+    </>
   );
 };

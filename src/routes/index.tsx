@@ -1,13 +1,15 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Box,
-  Button,
   Container,
   SimpleGrid,
   Title,
   useMantineTheme,
 } from "@mantine/core";
 import { BoxComponent } from "../components/BoxComponent";
+import { CardComponent } from "../components/CardComponent";
+import { IconCalendarWeek } from "@tabler/icons-react";
+import { IconBasket } from "@tabler/icons-react";
 
 export const Route = createFileRoute("/")({
   component: RouteComponent,
@@ -31,43 +33,24 @@ function RouteComponent() {
               Vad vill du göra idag?
             </Title>
 
-            <Box
-              data-container
-              style={{
-                backgroundColor: theme.other.surfaceLow,
-                borderRadius: theme.radius.xl,
-                padding: theme.spacing.md,
-              }}
+            <SimpleGrid
+              cols={{ base: 1, sm: 2, md: 3 }}
+              spacing={{ base: "lg", md: "lg" }}
             >
-              <SimpleGrid
-                cols={{ base: 1, sm: 2, md: 3 }}
-                spacing={{ base: "lg", md: "lg" }}
-              >
-                <Button
-                  variant="filled"
-                  size="md"
-                  radius="xl"
-                  color="primary"
-                  fullWidth
-                  component={Link}
-                  to="/recipes"
-                >
-                  Recept
-                </Button>
+              <CardComponent
+                icon={IconCalendarWeek}
+                header="Veckoplanering"
+                body="Planera dina måltider"
+                to="/weeklyplanning"
+              />
 
-                <Button
-                  variant="subtle"
-                  size="md"
-                  radius="xl"
-                  color="secondary"
-                  fullWidth
-                  component={Link}
-                  to="/weeklyplanning"
-                >
-                  Veckoplanering
-                </Button>
-              </SimpleGrid>
-            </Box>
+              <CardComponent
+                icon={IconBasket}
+                header="Inköpslista"
+                body="Se din inköpslista för veckan"
+                to="/shoppinglist"
+              />
+            </SimpleGrid>
           </BoxComponent>
         </div>
       </Container>

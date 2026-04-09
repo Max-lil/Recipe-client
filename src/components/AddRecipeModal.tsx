@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Divider,
   FileInput,
@@ -20,18 +21,30 @@ export const AddRecipeModal = ({ isOpen, onClose }: ComponentProps) => {
     title: "",
     url: "",
   });
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const addRecipeMutation = useAddRecipeMutation();
 
   const handleSubmit = async () => {
-    addRecipeMutation.mutate(recipe, {
+    const trimmedUrl = recipe.url.trim();
+    setErrorMessage(null);
+    const payload = trimmedUrl
+      ? { title: recipe.title, url: trimmedUrl }
+      : { title: recipe.title };
+
+    addRecipeMutation.mutate(payload, {
       onSuccess: () => {
         setRecipe({ title: "", url: "" });
+        setErrorMessage(null);
         handleOnClose();
+      },
+      onError: (error) => {
+        setErrorMessage(error.message || "Kunde inte lagga till recept.");
       },
     });
   };
 
   const handleOnClose = () => {
+    setErrorMessage(null);
     onClose();
   };
 
@@ -71,7 +84,14 @@ export const AddRecipeModal = ({ isOpen, onClose }: ComponentProps) => {
                   setRecipe({ ...recipe, title: e.currentTarget.value })
                 }
               />
-              <Button onClick={handleSubmit}>Spara</Button>
+              {errorMessage ? (
+                <Alert color="red" mt="sm" radius="md">
+                  {errorMessage}
+                </Alert>
+              ) : null}
+              <Button loading={addRecipeMutation.isPending} onClick={handleSubmit}>
+                Spara
+              </Button>
             </div>
           </Modal.Body>
           <Divider my="md" />

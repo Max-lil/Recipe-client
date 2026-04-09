@@ -1,8 +1,8 @@
 import { Button, Table } from "@mantine/core";
-import type { Recipe } from "../models/Recipe";
+import type { ApiRecipeschema } from "../models/Recipe";
 
 interface Props {
-  data?: Recipe[];
+  data?: ApiRecipeschema[];
 }
 export const RecipeTable = ({ data }: Props) => {
   return (
@@ -16,18 +16,20 @@ export const RecipeTable = ({ data }: Props) => {
 
       <Table.Tbody>
         {data?.map((recipe) => (
-          <Table.Tr key={recipe.url}>
+          <Table.Tr key={recipe.id}>
             <Table.Td>{recipe.title}</Table.Td>
             <Table.Td>
-              <Button
-                color="orange.5"
-                component="a"
-                href={recipe.url}
-                target="_blank"
-                size="sm"
-              >
-                Till recept
-              </Button>
+              {recipe.url ? (
+                <Button
+                  color="orange.5"
+                  component="a"
+                  href={recipe.url}
+                  target="_blank"
+                  size="sm"
+                >
+                  Till recept
+                </Button>
+              ) : null}
             </Table.Td>
           </Table.Tr>
         ))}
