@@ -1,5 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { Alert, List, Loader, Stack, Text } from "@mantine/core";
+import { Alert, Button, Group, List, Loader, Stack, Text } from "@mantine/core";
+import { useState, type ReactNode } from "react";
+import { AddShoppingListItemModal } from "./AddShoppingListItemModal";
 import { shoppingListQueryOptions } from "../services/shoppinglist/queries";
 
 interface Props {
@@ -7,34 +9,29 @@ interface Props {
 }
 
 export const ShoppingListComponent = ({ weekPlanId }: Props) => {
+  const [modalOpened, setModalOpened] = useState(false);
   const shoppingListQuery = useQuery(shoppingListQueryOptions(weekPlanId));
 
-  if (shoppingListQuery.isPending) {
-    return <Loader color="orange.5" size="xl" />;
-  }
+  let content: ReactNode;
 
-  if (shoppingListQuery.isError) {
-    return (
+  if (shoppingListQuery.isPending) {
+    content = <Loader color="orange.5" size="xl" />;
+  } else if (shoppingListQuery.isError) {
+    content = (
       <Alert color="red" title={"Kunde inte h\u00E4mta ink\u00F6pslistan"}>
         {shoppingListQuery.error instanceof Error
           ? shoppingListQuery.error.message
           : "Ett ov\u00E4ntat fel uppstod."}
       </Alert>
     );
-  }
+  } else if (shoppingListQuery.data.length === 0) {
+    content = <Text>{"Det finns inga ingredienser i ink\u00F6pslistan \u00E4nnu."}</Text>;
+  } else {
+    const sortedShoppingList = [...shoppingListQuery.data].sort((left, right) =>
+      left.name.localeCompare(right.name, "sv", { sensitivity: "base" }),
+    );
 
-  if (shoppingListQuery.data.length === 0) {
-    return <Text>{"Det finns inga ingredienser i ink\u00F6pslistan \u00E4nnu."}</Text>;
-  }
-
-  const sortedShoppingList = [...shoppingListQuery.data].sort((left, right) =>
-    left.name.localeCompare(right.name, "sv", { sensitivity: "base" }),
-  );
-
-  return (
-    <Stack gap="sm">
-      <Text fw={600}>Ingredienser</Text>
-
+    content = (
       <List spacing="xs">
         {sortedShoppingList.map((item) => (
           <List.Item key={item.id}>
@@ -43,6 +40,28 @@ export const ShoppingListComponent = ({ weekPlanId }: Props) => {
           </List.Item>
         ))}
       </List>
-    </Stack>
+    );
+  }
+
+  return (
+    <>
+      <Stack gap="sm">
+        <Group justify="space-between" align="center">
+          <Text fw={600}>Ingredienser</Text>
+
+          <Button size="sm" onClick={() => setModalOpened(true)}>
+            Lägg till ingrediens
+          </Button>
+        </Group>
+
+        {content}
+      </Stack>
+
+      <AddShoppingListItemModal
+        opened={modalOpened}
+        onClose={() => setModalOpened(false)}
+        weekPlanId={weekPlanId}
+      />
+    </>
   );
 };

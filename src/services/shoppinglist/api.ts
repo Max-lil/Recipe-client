@@ -1,5 +1,7 @@
 import {
+  createShoppingListItemSchema,
   shoppingListResponseSchema,
+  type CreateShoppingListItemInput,
   type ShoppingListItem,
 } from "../../models/ShoppingList";
 
@@ -23,4 +25,38 @@ export const getShoppingListByWeekPlanId = async (
 
   const data = await response.json();
   return shoppingListResponseSchema.parse(data);
+};
+
+export const addShoppingListItem = async (
+  weekPlanId: number,
+  item: CreateShoppingListItemInput,
+): Promise<void> => {
+  const payload = createShoppingListItemSchema.parse(item);
+
+  const response = await fetch(`${BASE_URL}/shoppinglist/${weekPlanId}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      await getErrorMessage(response, "Kunde inte lägga till ingrediensen."),
+    );
+  }
+
+  if (response.status === 204) {
+    return;
+  }
+
+  const contentType = response.headers.get("content-type");
+
+  if (contentType?.includes("application/json")) {
+    await response.json();
+    return;
+  }
+
+  await response.text();
 };
