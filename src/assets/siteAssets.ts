@@ -1,5 +1,5 @@
 export const siteConfig = {
-  siteName: "Recepthjälparen 3000",
+  siteName: "Receptplaneraren",
   logoUrl: "/logo.png",
   logoAlt: "Receptlogotyp",
 } as const;
