@@ -4,9 +4,10 @@ import {
   Paper,
   ScrollArea,
   Stack,
-  Table,
   Text,
+  useMantineTheme,
 } from "@mantine/core";
+import { IconCheck, IconExternalLink } from "@tabler/icons-react";
 import type { Recipe } from "../models/Recipe";
 
 interface Props {
@@ -16,47 +17,20 @@ interface Props {
 }
 
 export const RecipeSelector = ({ data, onSelect, selectedRecipeId }: Props) => {
+  const theme = useMantineTheme();
+
   const isSelected = (id: number) => selectedRecipeId === id;
 
-  const desktopRows = data?.map((recipe) => (
-    <Table.Tr
-      key={recipe.id}
-      bg={isSelected(recipe.id) ? "var(--mantine-color-blue-light)" : undefined}
-    >
-      <Table.Td>
-        <Button
-          color={isSelected(recipe.id) ? "blue" : "gray"}
-          onClick={() => onSelect(isSelected(recipe.id) ? null : recipe)}
-          size="xs"
-          variant={isSelected(recipe.id) ? "filled" : "light"}
-        >
-          {isSelected(recipe.id) ? "Vald" : "Välj"}
-        </Button>
-      </Table.Td>
-      <Table.Td>{recipe.title}</Table.Td>
-      <Table.Td>
-        {recipe.url ? (
-          <Button
-            color="orange.5"
-            component="a"
-            href={recipe.url}
-            target="_blank"
-            size="sm"
-          >
-            Till recept
-          </Button>
-        ) : null}
-      </Table.Td>
-    </Table.Tr>
-  ));
-
-  const mobileRows = data?.map((recipe) => (
+  const rows = data?.map((recipe) => (
     <Paper
       key={recipe.id}
       p="sm"
-      radius="md"
-      withBorder
-      bg={isSelected(recipe.id) ? "var(--mantine-color-blue-light)" : "white"}
+      radius="xl"
+      bg={
+        isSelected(recipe.id)
+          ? theme.other.primaryContainer
+          : theme.other.surfaceLowest
+      }
     >
       <Stack gap="sm">
         <Group align="flex-start" wrap="nowrap">
@@ -67,21 +41,28 @@ export const RecipeSelector = ({ data, onSelect, selectedRecipeId }: Props) => {
 
         <Group grow>
           <Button
-            color={isSelected(recipe.id) ? "blue" : "gray"}
+            color="primary"
             onClick={() => onSelect(isSelected(recipe.id) ? null : recipe)}
             size="xs"
-            variant={isSelected(recipe.id) ? "filled" : "light"}
+            variant={isSelected(recipe.id) ? "filled" : "default"}
+            leftSection={
+              isSelected(recipe.id) ? <IconCheck size={14} /> : undefined
+            }
           >
             {isSelected(recipe.id) ? "Vald" : "Välj"}
           </Button>
 
           {recipe.url ? (
             <Button
-              color="orange.5"
               component="a"
               href={recipe.url}
               target="_blank"
               size="xs"
+              leftSection={<IconExternalLink size={14} />}
+              style={{
+                backgroundColor: theme.other.tertiaryContainer,
+                color: theme.other.onTertiaryContainer,
+              }}
             >
               Till recept
             </Button>
@@ -94,20 +75,13 @@ export const RecipeSelector = ({ data, onSelect, selectedRecipeId }: Props) => {
   return (
     <>
       <Stack hiddenFrom="sm" gap="sm">
-        {mobileRows}
+        {rows}
       </Stack>
 
       <ScrollArea h={300} visibleFrom="sm">
-        <Table miw={700} stickyHeader>
-          <Table.Thead bg="white">
-            <Table.Tr>
-              <Table.Th>Välj</Table.Th>
-              <Table.Th>Namn</Table.Th>
-              <Table.Th>URL</Table.Th>
-            </Table.Tr>
-          </Table.Thead>
-          <Table.Tbody>{desktopRows}</Table.Tbody>
-        </Table>
+        <Stack gap="sm" p={2}>
+          {rows}
+        </Stack>
       </ScrollArea>
     </>
   );

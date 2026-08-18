@@ -41,12 +41,12 @@ function RouteComponent() {
         ) : null}
 
         {weekStartDate && weekPlanQuery.isPending ? (
-          <Loader color="orange.5" size="xl" />
+          <Loader color="secondary.5" size="xl" />
         ) : null}
 
         {weekStartDate && weekPlanQuery.isError ? (
           <Alert
-            color="red"
+            color="danger"
             title={"Kunde inte h\u00E4mta veckoplaneringen"}
           >
             {weekPlanQuery.error instanceof Error

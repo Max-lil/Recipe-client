@@ -1,5 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import { Alert, Button, Group, List, Loader, Stack, Text } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Group,
+  Loader,
+  Paper,
+  Stack,
+  Text,
+  useMantineTheme,
+} from "@mantine/core";
+import { IconCircle, IconPlus } from "@tabler/icons-react";
 import { useState, type ReactNode } from "react";
 import { AddShoppingListItemModal } from "./AddShoppingListItemModal";
 import { shoppingListQueryOptions } from "../services/shoppinglist/queries";
@@ -9,16 +19,17 @@ interface Props {
 }
 
 export const ShoppingListComponent = ({ weekPlanId }: Props) => {
+  const theme = useMantineTheme();
   const [modalOpened, setModalOpened] = useState(false);
   const shoppingListQuery = useQuery(shoppingListQueryOptions(weekPlanId));
 
   let content: ReactNode;
 
   if (shoppingListQuery.isPending) {
-    content = <Loader color="orange.5" size="xl" />;
+    content = <Loader color="secondary.5" size="xl" />;
   } else if (shoppingListQuery.isError) {
     content = (
-      <Alert color="red" title={"Kunde inte h\u00E4mta ink\u00F6pslistan"}>
+      <Alert color="danger" title={"Kunde inte h\u00E4mta ink\u00F6pslistan"}>
         {shoppingListQuery.error instanceof Error
           ? shoppingListQuery.error.message
           : "Ett ov\u00E4ntat fel uppstod."}
@@ -32,14 +43,19 @@ export const ShoppingListComponent = ({ weekPlanId }: Props) => {
     );
 
     content = (
-      <List spacing="xs">
+      <Stack gap="xs">
         {sortedShoppingList.map((item) => (
-          <List.Item key={item.id}>
-            {item.quantity !== null ? `${item.quantity} ${item.unit} ` : ""}
-            {item.name}
-          </List.Item>
+          <Paper key={item.id} p="sm" radius="xl" bg={theme.other.surfaceLowest}>
+            <Group gap="sm" wrap="nowrap">
+              <IconCircle size={20} color={theme.other.outlineVariant} />
+              <Text>
+                {item.quantity !== null ? `${item.quantity} ${item.unit} ` : ""}
+                {item.name}
+              </Text>
+            </Group>
+          </Paper>
         ))}
-      </List>
+      </Stack>
     );
   }
 
@@ -49,7 +65,11 @@ export const ShoppingListComponent = ({ weekPlanId }: Props) => {
         <Group justify="space-between" align="center">
           <Text fw={600}>Ingredienser</Text>
 
-          <Button size="sm" onClick={() => setModalOpened(true)}>
+          <Button
+            size="sm"
+            onClick={() => setModalOpened(true)}
+            leftSection={<IconPlus size={16} />}
+          >
             Lägg till ingrediens
           </Button>
         </Group>

@@ -12,16 +12,16 @@ export const theme = createTheme({
 
   colors: {
     primary: [
-      "#e8f8ee",
-      "#c8efd6",
-      "#9ee2b5",
-      "#70d592",
-      "#49cb74",
-      "#00c853",
-      "#00b44a",
-      "#00963d",
-      "#007731",
-      "#005822",
+      "#e6f4ea",
+      "#c3e6cd",
+      "#97d6ab",
+      "#66c687",
+      "#33b563",
+      "#006a28",
+      "#005d22",
+      "#004e1c",
+      "#004016",
+      "#00330f",
     ],
 
     secondary: [
@@ -53,7 +53,7 @@ export const theme = createTheme({
     neutral: [
       "#ffffff",
       "#f8fbf4",
-      "#f1f8e9",
+      "#f2f9ea",
       "#ebf3e3",
       "#dce6d4",
       "#c9d2c2",
@@ -83,15 +83,22 @@ export const theme = createTheme({
   primaryShade: 5,
 
   other: {
-    surface: "#f1f8e9",
+    surface: "#f2f9ea",
     surfaceLow: "#ebf3e3",
     surfaceHigh: "#dce6d4",
     surfaceHighest: "#c9d2c2",
     surfaceLowest: "#ffffff",
 
     textPrimary: "#2a3127",
-    textSecondary: "#51584d",
+    textSecondary: "#575e52",
     outlineVariant: "#a8afa2",
+
+    primaryContainer: "#5cfd80",
+    onPrimaryContainer: "#005d22",
+    secondaryContainer: "#c1ecd4",
+    onSecondaryContainer: "#325947",
+    tertiaryContainer: "#a6feea",
+    onTertiaryContainer: "#006456",
 
     primaryGradient: "linear-gradient(135deg, #006a28 0%, #005d22 100%)",
     glassSurface: "rgba(241, 248, 233, 0.7)",

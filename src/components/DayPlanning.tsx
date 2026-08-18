@@ -1,13 +1,15 @@
 import {
-  Burger,
+  ActionIcon,
   Button,
   Collapse,
   Loader,
   Stack,
   Text,
   Title,
+  useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { IconChevronDown, IconExternalLink } from "@tabler/icons-react";
 import type { Recipe } from "../models/Recipe";
 import { BoxComponent } from "./BoxComponent";
 import { RecipeSelector } from "./RecipeSelector";
@@ -29,6 +31,7 @@ export const DayPlanning = ({
   selectedRecipe,
   onSelectRecipe,
 }: Props) => {
+  const theme = useMantineTheme();
   const [opened, { toggle }] = useDisclosure(false);
 
   return (
@@ -45,12 +48,16 @@ export const DayPlanning = ({
 
               {selectedRecipe.url ? (
                 <Button
-                  color="orange.5"
                   component="a"
                   href={selectedRecipe.url}
                   target="_blank"
                   size="xs"
                   w="fit-content"
+                  leftSection={<IconExternalLink size={14} />}
+                  style={{
+                    backgroundColor: theme.other.tertiaryContainer,
+                    color: theme.other.onTertiaryContainer,
+                  }}
                 >
                   Till recept
                 </Button>
@@ -61,10 +68,22 @@ export const DayPlanning = ({
           )}
         </Stack>
 
-        <Burger variant="filled" opened={opened} onClick={toggle} />
+        <ActionIcon
+          onClick={toggle}
+          aria-label="Visa receptval"
+          size="lg"
+        >
+          <IconChevronDown
+            size={20}
+            style={{
+              transform: opened ? "rotate(180deg)" : "rotate(0deg)",
+              transition: "transform 200ms ease",
+            }}
+          />
+        </ActionIcon>
 
         {isRecipesLoading ? (
-          <Loader color="orange.5" size="xl" />
+          <Loader color="secondary.5" size="xl" />
         ) : (
           <Collapse in={opened}>
             <RecipeSelector

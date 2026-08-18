@@ -8,6 +8,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
+import { IconDeviceFloppy } from "@tabler/icons-react";
 import { useState, type FormEvent } from "react";
 import { useAddShoppingListItemMutation } from "../services/shoppinglist/queries";
 
@@ -106,6 +107,8 @@ export const AddShoppingListItemModal = ({
               <TextInput
                 label="Namn"
                 placeholder="Butter"
+                size="md"
+                radius="lg"
                 value={name}
                 onChange={(event) => setName(event.currentTarget.value)}
               />
@@ -113,6 +116,8 @@ export const AddShoppingListItemModal = ({
               <TextInput
                 label="Enhet"
                 placeholder="g"
+                size="md"
+                radius="lg"
                 value={unit}
                 onChange={(event) => setUnit(event.currentTarget.value)}
               />
@@ -124,15 +129,20 @@ export const AddShoppingListItemModal = ({
                 inputMode="decimal"
                 min="0"
                 step="any"
+                size="md"
+                radius="lg"
                 value={quantity}
                 onChange={(event) => setQuantity(event.currentTarget.value)}
               />
 
-              {errorMessage ? <Alert color="red">{errorMessage}</Alert> : null}
+              {errorMessage ? (
+                <Alert color="danger">{errorMessage}</Alert>
+              ) : null}
 
               <Button
                 type="submit"
                 loading={addShoppingListItemMutation.isPending}
+                leftSection={<IconDeviceFloppy size={16} />}
               >
                 Spara ingrediens
               </Button>

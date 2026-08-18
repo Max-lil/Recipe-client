@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Alert, Button, Loader, Stack, Text, Title } from "@mantine/core";
+import { IconPlus } from "@tabler/icons-react";
 import { useState } from "react";
 import { AddRecipeModal } from "../components/AddRecipeModal";
 import { BoxComponent } from "../components/BoxComponent";
@@ -17,13 +18,15 @@ function RouteComponent() {
 
   return (
     <Stack gap="lg">
-      <Title order={1}>Recept</Title>
+      <Title order={1} fw={700}>
+        Recept
+      </Title>
 
       <Button
         variant="filled"
         size="lg"
-        color="green"
         onClick={() => setOpened(true)}
+        leftSection={<IconPlus size={18} />}
       >
         Lägg till recept
       </Button>
@@ -31,10 +34,12 @@ function RouteComponent() {
       <AddRecipeModal isOpen={opened} onClose={() => setOpened(false)} />
 
       <BoxComponent>
-        {recipesQuery.isPending ? <Loader color="orange.5" size="xl" /> : null}
+        {recipesQuery.isPending ? (
+          <Loader color="secondary.5" size="xl" />
+        ) : null}
 
         {recipesQuery.isError ? (
-          <Alert color="red" title="Kunde inte hämta recept">
+          <Alert color="danger" title="Kunde inte hämta recept">
             {recipesQuery.error instanceof Error
               ? recipesQuery.error.message
               : "Ett oväntat fel uppstod."}

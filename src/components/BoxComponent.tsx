@@ -1,4 +1,4 @@
-import { Box } from "@mantine/core";
+import { Box, useMantineTheme } from "@mantine/core";
 import type { ReactNode } from "react";
 
 interface Props {
@@ -6,8 +6,10 @@ interface Props {
 }
 
 export const BoxComponent = ({ children }: Props) => {
+  const theme = useMantineTheme();
+
   return (
-    <Box bg="gray.2" className="flex flex-col gap-6 rounded-lg p-6">
+    <Box bg={theme.other.surfaceLow} className="flex flex-col gap-6 rounded-2xl p-6">
       {children}
     </Box>
   );

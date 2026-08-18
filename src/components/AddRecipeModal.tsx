@@ -9,6 +9,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
+import { IconDeviceFloppy } from "@tabler/icons-react";
 import { useState } from "react";
 import { useAddRecipeMutation } from "../services/recipes/queries";
 
@@ -96,12 +97,16 @@ export const AddRecipeModal = ({ isOpen, onClose }: ComponentProps) => {
             />
 
             {errorMessage ? (
-              <Alert color="red" radius="md">
+              <Alert color="danger" radius="md">
                 {errorMessage}
               </Alert>
             ) : null}
 
-            <Button loading={addRecipeMutation.isPending} onClick={handleSubmit}>
+            <Button
+              loading={addRecipeMutation.isPending}
+              onClick={handleSubmit}
+              leftSection={<IconDeviceFloppy size={16} />}
+            >
               Spara
             </Button>
           </Stack>
@@ -114,6 +119,8 @@ export const AddRecipeModal = ({ isOpen, onClose }: ComponentProps) => {
             label="Lägg in bild"
             description="Lägg in en bild på ingredienser"
             placeholder="Img"
+            size="md"
+            radius="lg"
           />
         </Modal.Body>
       </ModalContent>

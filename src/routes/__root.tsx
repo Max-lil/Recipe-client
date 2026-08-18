@@ -17,6 +17,12 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import {
+  IconBasket,
+  IconCalendarWeek,
+  IconHome,
+  IconToolsKitchen2,
+} from "@tabler/icons-react";
 import { siteConfig } from "../assets/siteAssets";
 import logo from "../assets/ChatGPT Image 28 jan. 2026 15_35_24.svg";
 
@@ -25,10 +31,10 @@ export const Route = createRootRoute({
 });
 
 const navLinks = [
-  { label: "Hem", to: "/" },
-  { label: "Veckoplanering", to: "/weeklyplanning" },
-  { label: "Inköpslista", to: "/shoppinglist" },
-  { label: "Recept", to: "/recipes" },
+  { label: "Hem", to: "/", icon: IconHome },
+  { label: "Veckoplanering", to: "/weeklyplanning", icon: IconCalendarWeek },
+  { label: "Inköpslista", to: "/shoppinglist", icon: IconBasket },
+  { label: "Recept", to: "/recipes", icon: IconToolsKitchen2 },
 ];
 
 function RootLayout() {
@@ -92,6 +98,7 @@ function RootLayout() {
                       paddingInline: 18,
                       display: "flex",
                       alignItems: "center",
+                      gap: 6,
                       color: isActive
                         ? theme.colors.primary[6]
                         : theme.other.textSecondary,
@@ -101,6 +108,7 @@ function RootLayout() {
                         : "2px solid transparent",
                     }}
                   >
+                    <link.icon size={18} />
                     {link.label}
                   </UnstyledButton>
                 );
@@ -160,7 +168,9 @@ function RootLayout() {
                   style={{
                     width: "100%",
                     padding: "12px 4px",
-                    display: "block",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
                     color: isActive
                       ? theme.colors.primary[6]
                       : theme.other.textPrimary,
@@ -168,6 +178,7 @@ function RootLayout() {
                     borderBottom: `1px solid ${theme.other.surfaceHigh}`,
                   }}
                 >
+                  <link.icon size={20} />
                   {link.label}
                 </UnstyledButton>
               );

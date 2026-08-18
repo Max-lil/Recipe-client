@@ -1,6 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { Alert, Button, Group, Loader, Text, Title } from "@mantine/core";
+import {
+  Alert,
+  Button,
+  Group,
+  Loader,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
+import { IconArrowsShuffle, IconDeviceFloppy } from "@tabler/icons-react";
 import { useState } from "react";
 import dayjs from "dayjs";
 import "dayjs/locale/sv";
@@ -162,7 +171,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex flex-col gap-3 p-3">
+    <Stack gap="md">
       <Title order={1} fw={700}>
         Veckoplanering
       </Title>
@@ -170,11 +179,11 @@ function RouteComponent() {
       <WeekInputMinimal onChange={handleWeekChange} />
 
       {weekStartDate && weekPlanQuery.isPending ? (
-        <Loader color="orange.5" size="xl" />
+        <Loader color="secondary.5" size="xl" />
       ) : null}
 
       {weekStartDate && weekPlanQuery.isError ? (
-        <Alert color="red" title="Kunde inte hämta veckoplaneringen">
+        <Alert color="danger" title="Kunde inte hämta veckoplaneringen">
           {weekPlanQuery.error instanceof Error
             ? weekPlanQuery.error.message
             : "Ett oväntat fel uppstod."}
@@ -199,6 +208,7 @@ function RouteComponent() {
             disabled={!recipesQuery.data?.length}
             onClick={handleRandomizeRecipes}
             variant="light"
+            leftSection={<IconArrowsShuffle size={16} />}
           >
             Slumpa recept
           </Button>
@@ -206,6 +216,7 @@ function RouteComponent() {
             disabled={!isDirty || saveStatus === "saving"}
             loading={saveStatus === "saving"}
             onClick={handleSaveWeek}
+            leftSection={<IconDeviceFloppy size={16} />}
           >
             Spara recept
           </Button>
@@ -213,7 +224,7 @@ function RouteComponent() {
       ) : null}
 
       {draft ? (
-        <Text c={saveStatus === "error" ? "red" : "dimmed"} size="sm">
+        <Text c={saveStatus === "error" ? "danger" : "dimmed"} size="sm">
           {saveStatus === "idle" && isDirty
             ? "Du har osparade ändringar."
             : null}
@@ -226,6 +237,6 @@ function RouteComponent() {
             : null}
         </Text>
       ) : null}
-    </div>
+    </Stack>
   );
 }

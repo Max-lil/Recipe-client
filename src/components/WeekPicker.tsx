@@ -1,4 +1,6 @@
+import { useMantineTheme } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
+import { IconCalendar } from "@tabler/icons-react";
 import { useState } from "react";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
@@ -10,6 +12,7 @@ interface Props {
 }
 
 export function WeekInputMinimal({ onChange }: Props) {
+  const theme = useMantineTheme();
   const [value, setValue] = useState<string | null>(null);
 
   const handleChange = (nextValue: string | null) => {
@@ -20,6 +23,12 @@ export function WeekInputMinimal({ onChange }: Props) {
   return (
     <DatePickerInput
       type="default"
+      size="md"
+      leftSection={<IconCalendar size={18} stroke={1.5} />}
+      leftSectionPointerEvents="none"
+      popoverProps={{
+        styles: { dropdown: { backgroundColor: theme.other.surfaceLowest } },
+      }}
       label="Vecka"
       placeholder="Välj en vecka"
       value={value}
