@@ -8,7 +8,7 @@ import { BoxComponent } from "../components/BoxComponent";
 import { RecipeTable } from "../components/RecipeTable";
 import { recipesQueryOptions } from "../services/recipes/queries";
 
-export const Route = createFileRoute("/recipes")({
+export const Route = createFileRoute("/_authenticated/recipes")({
   component: RouteComponent,
 });
 

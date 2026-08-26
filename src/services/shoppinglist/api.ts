@@ -15,7 +15,9 @@ const getErrorMessage = async (response: Response, fallbackMessage: string) => {
 export const getShoppingListByWeekPlanId = async (
   weekPlanId: number,
 ): Promise<ShoppingListItem[]> => {
-  const response = await fetch(`${BASE_URL}/shoppinglist/${weekPlanId}`);
+  const response = await fetch(`${BASE_URL}/shoppinglist/${weekPlanId}`, {
+    credentials: "include",
+  });
 
   if (!response.ok) {
     throw new Error(
@@ -39,6 +41,7 @@ export const addShoppingListItem = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
+    credentials: "include",
   });
 
   if (!response.ok) {

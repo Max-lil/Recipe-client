@@ -12,7 +12,9 @@ const getErrorMessage = async (response: Response, fallbackMessage: string) => {
 };
 
 export const getRecipes = async (): Promise<Recipe[]> => {
-  const response = await fetch(`${BASE_URL}/recipes`);
+  const response = await fetch(`${BASE_URL}/recipes`, {
+    credentials: "include",
+  });
 
   if (!response.ok) {
     throw new Error(await getErrorMessage(response, "Kunde inte hämta recept."));
@@ -33,6 +35,7 @@ export const addRecipe = async (recipe: CreateRecipeInput) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(recipe),
+    credentials: "include",
   });
 
   if (!response.ok) {

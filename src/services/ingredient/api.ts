@@ -13,7 +13,9 @@ const getErrorMessage = async (response: Response, fallbackMessage: string) => {
 export const getIngredientsByRecipeId = async (
   recipeId: number,
 ): Promise<Ingredient[]> => {
-  const response = await fetch(`${BASE_URL}/ingredients/${recipeId}`);
+  const response = await fetch(`${BASE_URL}/ingredients/${recipeId}`, {
+    credentials: "include",
+  });
 
   if (!response.ok) {
     throw new Error(

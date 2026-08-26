@@ -2,11 +2,14 @@ import {
   createRootRoute,
   Link,
   Outlet,
+  useNavigate,
   useRouterState,
 } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Box,
   Burger,
+  Button,
   Container,
   Divider,
   Drawer,
@@ -25,6 +28,8 @@ import {
 } from "@tabler/icons-react";
 import { siteConfig } from "../assets/siteAssets";
 import logo from "../assets/ChatGPT Image 28 jan. 2026 15_35_24.svg";
+import { authClient } from "../utils/auth-client";
+import { useSignOutMutation } from "../services/auth/queries";
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -45,6 +50,23 @@ function RootLayout() {
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
+
+  const { data: session } = authClient.useSession();
+  const isLoggedIn = !!session;
+  const visibleNavLinks = isLoggedIn ? navLinks : [];
+
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const signOutMutation = useSignOutMutation();
+
+  const handleLogout = () => {
+    signOutMutation.mutate(undefined, {
+      onSuccess: () => {
+        queryClient.clear();
+        navigate({ to: "/login" });
+      },
+    });
+  };
 
   return (
     <Box
@@ -85,7 +107,7 @@ function RootLayout() {
             </Text>
 
             <Group gap={0} visibleFrom="sm">
-              {navLinks.map((link) => {
+              {visibleNavLinks.map((link) => {
                 const isActive = pathname === link.to;
 
                 return (
@@ -113,6 +135,17 @@ function RootLayout() {
                   </UnstyledButton>
                 );
               })}
+
+              {isLoggedIn ? (
+                <Button
+                  variant="subtle"
+                  ml="md"
+                  loading={signOutMutation.isPending}
+                  onClick={handleLogout}
+                >
+                  Logga ut
+                </Button>
+              ) : null}
             </Group>
 
             <Burger
@@ -156,7 +189,7 @@ function RootLayout() {
           />
 
           <Box px="md" py="sm">
-            {navLinks.map((link) => {
+            {visibleNavLinks.map((link) => {
               const isActive = pathname === link.to;
 
               return (
@@ -183,6 +216,21 @@ function RootLayout() {
                 </UnstyledButton>
               );
             })}
+
+            {isLoggedIn ? (
+              <Button
+                variant="subtle"
+                mt="sm"
+                fullWidth
+                loading={signOutMutation.isPending}
+                onClick={() => {
+                  closeDrawer();
+                  handleLogout();
+                }}
+              >
+                Logga ut
+              </Button>
+            ) : null}
           </Box>
         </ScrollArea>
       </Drawer>

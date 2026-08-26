@@ -28,14 +28,12 @@ import {
 } from "../services/planning/queries";
 import { recipesQueryOptions } from "../services/recipes/queries";
 
-export const Route = createFileRoute("/weeklyplanning")({
+export const Route = createFileRoute("/_authenticated/weeklyplanning")({
   component: RouteComponent,
 });
 
 dayjs.extend(isoWeek);
 dayjs.locale("sv");
-
-const USER_ID = 1;
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 type RecipeEdits = Partial<Record<string, Recipe | null>>;
@@ -77,6 +75,9 @@ const mergeDraftWithRecipeEdits = (
 });
 
 function RouteComponent() {
+  const { session } = Route.useRouteContext();
+  const userId = Number(session.user.id);
+
   const [value, setValue] = useState<string | null>(null);
   const [recipeEdits, setRecipeEdits] = useState<RecipeEdits>({});
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
@@ -86,7 +87,7 @@ function RouteComponent() {
     : null;
 
   const weekPlanQuery = useQuery(
-    weekPlanQueryOptions(USER_ID, weekStartDate ?? undefined),
+    weekPlanQueryOptions(userId, weekStartDate ?? undefined),
   );
   const recipesQuery = useQuery(recipesQueryOptions());
   const saveWeekMutation = useSaveWeekPlanMutation();
@@ -162,7 +163,7 @@ function RouteComponent() {
     setSaveStatus("saving");
 
     try {
-      await saveWeekMutation.mutateAsync(buildSavePayload(draft, USER_ID));
+      await saveWeekMutation.mutateAsync(buildSavePayload(draft, userId));
       setRecipeEdits({});
       setSaveStatus("saved");
     } catch {

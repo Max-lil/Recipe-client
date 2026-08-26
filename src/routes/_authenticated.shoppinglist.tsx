@@ -9,22 +9,23 @@ import { ShoppingListComponent } from "../components/ShoppingListComponent";
 import { WeekInputMinimal } from "../components/WeekPicker";
 import { weekPlanQueryOptions } from "../services/planning/queries";
 
-export const Route = createFileRoute("/shoppinglist")({
+export const Route = createFileRoute("/_authenticated/shoppinglist")({
   component: RouteComponent,
 });
 
 dayjs.extend(isoWeek);
 
-const USER_ID = 1;
-
 function RouteComponent() {
+  const { session } = Route.useRouteContext();
+  const userId = Number(session.user.id);
+
   const [value, setValue] = useState<string | null>(null);
   const weekStartDate = value
     ? dayjs(value).startOf("isoWeek").format("YYYY-MM-DD")
     : null;
 
   const weekPlanQuery = useQuery(
-    weekPlanQueryOptions(USER_ID, weekStartDate ?? undefined),
+    weekPlanQueryOptions(userId, weekStartDate ?? undefined),
   );
 
   return (

@@ -29,6 +29,7 @@ export const loadWeekPlan = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -55,6 +56,7 @@ export const saveWeekPlan = async (
       "Content-Type": "application/json",
     },
     body: JSON.stringify(parsedPayload),
+    credentials: "include",
   });
 
   if (!response.ok) {

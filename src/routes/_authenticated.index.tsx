@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { CardComponent } from "../components/CardComponent";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   component: RouteComponent,
 });
 

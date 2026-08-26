@@ -9,25 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WeeklyplanningRouteImport } from './routes/weeklyplanning'
-import { Route as ShoppinglistRouteImport } from './routes/shoppinglist'
-import { Route as RecipesRouteImport } from './routes/recipes'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated.index'
+import { Route as AuthenticatedWeeklyplanningRouteImport } from './routes/_authenticated.weeklyplanning'
+import { Route as AuthenticatedShoppinglistRouteImport } from './routes/_authenticated.shoppinglist'
+import { Route as AuthenticatedRecipesRouteImport } from './routes/_authenticated.recipes'
 
-const WeeklyplanningRoute = WeeklyplanningRouteImport.update({
-  id: '/weeklyplanning',
-  path: '/weeklyplanning',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShoppinglistRoute = ShoppinglistRouteImport.update({
-  id: '/shoppinglist',
-  path: '/shoppinglist',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RecipesRoute = RecipesRouteImport.update({
-  id: '/recipes',
-  path: '/recipes',
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -35,77 +27,100 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedWeeklyplanningRoute =
+  AuthenticatedWeeklyplanningRouteImport.update({
+    id: '/weeklyplanning',
+    path: '/weeklyplanning',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedShoppinglistRoute =
+  AuthenticatedShoppinglistRouteImport.update({
+    id: '/shoppinglist',
+    path: '/shoppinglist',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedRecipesRoute = AuthenticatedRecipesRouteImport.update({
+  id: '/recipes',
+  path: '/recipes',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticatedIndexRoute
   '/login': typeof LoginRoute
-  '/recipes': typeof RecipesRoute
-  '/shoppinglist': typeof ShoppinglistRoute
-  '/weeklyplanning': typeof WeeklyplanningRoute
+  '/signup': typeof SignupRoute
+  '/recipes': typeof AuthenticatedRecipesRoute
+  '/shoppinglist': typeof AuthenticatedShoppinglistRoute
+  '/weeklyplanning': typeof AuthenticatedWeeklyplanningRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/login': typeof LoginRoute
-  '/recipes': typeof RecipesRoute
-  '/shoppinglist': typeof ShoppinglistRoute
-  '/weeklyplanning': typeof WeeklyplanningRoute
+  '/signup': typeof SignupRoute
+  '/recipes': typeof AuthenticatedRecipesRoute
+  '/shoppinglist': typeof AuthenticatedShoppinglistRoute
+  '/weeklyplanning': typeof AuthenticatedWeeklyplanningRoute
+  '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
-  '/recipes': typeof RecipesRoute
-  '/shoppinglist': typeof ShoppinglistRoute
-  '/weeklyplanning': typeof WeeklyplanningRoute
+  '/signup': typeof SignupRoute
+  '/_authenticated/recipes': typeof AuthenticatedRecipesRoute
+  '/_authenticated/shoppinglist': typeof AuthenticatedShoppinglistRoute
+  '/_authenticated/weeklyplanning': typeof AuthenticatedWeeklyplanningRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/recipes' | '/shoppinglist' | '/weeklyplanning'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/recipes' | '/shoppinglist' | '/weeklyplanning'
-  id:
-    | '__root__'
+  fullPaths:
     | '/'
     | '/login'
+    | '/signup'
     | '/recipes'
     | '/shoppinglist'
     | '/weeklyplanning'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/login'
+    | '/signup'
+    | '/recipes'
+    | '/shoppinglist'
+    | '/weeklyplanning'
+    | '/'
+  id:
+    | '__root__'
+    | '/_authenticated'
+    | '/login'
+    | '/signup'
+    | '/_authenticated/recipes'
+    | '/_authenticated/shoppinglist'
+    | '/_authenticated/weeklyplanning'
+    | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
-  RecipesRoute: typeof RecipesRoute
-  ShoppinglistRoute: typeof ShoppinglistRoute
-  WeeklyplanningRoute: typeof WeeklyplanningRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/weeklyplanning': {
-      id: '/weeklyplanning'
-      path: '/weeklyplanning'
-      fullPath: '/weeklyplanning'
-      preLoaderRoute: typeof WeeklyplanningRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/shoppinglist': {
-      id: '/shoppinglist'
-      path: '/shoppinglist'
-      fullPath: '/shoppinglist'
-      preLoaderRoute: typeof ShoppinglistRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recipes': {
-      id: '/recipes'
-      path: '/recipes'
-      fullPath: '/recipes'
-      preLoaderRoute: typeof RecipesRouteImport
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -115,22 +130,66 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/weeklyplanning': {
+      id: '/_authenticated/weeklyplanning'
+      path: '/weeklyplanning'
+      fullPath: '/weeklyplanning'
+      preLoaderRoute: typeof AuthenticatedWeeklyplanningRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/shoppinglist': {
+      id: '/_authenticated/shoppinglist'
+      path: '/shoppinglist'
+      fullPath: '/shoppinglist'
+      preLoaderRoute: typeof AuthenticatedShoppinglistRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/recipes': {
+      id: '/_authenticated/recipes'
+      path: '/recipes'
+      fullPath: '/recipes'
+      preLoaderRoute: typeof AuthenticatedRecipesRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
   }
 }
 
+interface AuthenticatedRouteChildren {
+  AuthenticatedRecipesRoute: typeof AuthenticatedRecipesRoute
+  AuthenticatedShoppinglistRoute: typeof AuthenticatedShoppinglistRoute
+  AuthenticatedWeeklyplanningRoute: typeof AuthenticatedWeeklyplanningRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedRecipesRoute: AuthenticatedRecipesRoute,
+  AuthenticatedShoppinglistRoute: AuthenticatedShoppinglistRoute,
+  AuthenticatedWeeklyplanningRoute: AuthenticatedWeeklyplanningRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
-  RecipesRoute: RecipesRoute,
-  ShoppinglistRoute: ShoppinglistRoute,
-  WeeklyplanningRoute: WeeklyplanningRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
