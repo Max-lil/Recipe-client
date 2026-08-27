@@ -1,4 +1,8 @@
-import { IconBasket, IconCalendarWeek, IconToolsKitchen2 } from "@tabler/icons-react";
+import {
+  IconBasket,
+  IconCalendarWeek,
+  IconToolsKitchen2,
+} from "@tabler/icons-react";
 import { createFileRoute } from "@tanstack/react-router";
 import { SimpleGrid, Stack, Text, Title, useMantineTheme } from "@mantine/core";
 import { CardComponent } from "../components/CardComponent";
@@ -9,12 +13,13 @@ export const Route = createFileRoute("/_authenticated/")({
 
 function RouteComponent() {
   const theme = useMantineTheme();
+  const { session } = Route.useRouteContext();
 
   return (
     <Stack gap="xl">
       <Stack gap="xs" maw={640}>
         <Title order={1} fw={700} fz={{ base: 32, sm: 44 }} lh={1.1}>
-          Välkommen!
+          {"Välkommen " + session.user.name + "!"}
         </Title>
         <Text size="lg" c={theme.other.textSecondary}>
           Vad vill du göra idag?
